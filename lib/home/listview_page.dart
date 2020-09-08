@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_refresh/flutter_refresh.dart';
 
-class IndexPage extends StatefulWidget {
+
+class ListViewPage extends StatefulWidget {
   @override
-  _IndexPageState createState() => _IndexPageState();
+  _ListViewPageState createState() => _ListViewPageState();
 }
 
-class _IndexPageState extends State<IndexPage> {
+class _ListViewPageState extends State<ListViewPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -64,15 +66,20 @@ class _IndexPageState extends State<IndexPage> {
               ),
             ],
           ),
-          ListViewDemo()
+          ListViewDemo(),
         ],
       ),
 
     );
   }
 }
+class ListViewDemo extends StatefulWidget {
+  @override
+  _ListViewDemoState createState() => _ListViewDemoState();
+}
 
-class ListViewDemo extends StatelessWidget {
+class _ListViewDemoState extends State<ListViewDemo> {
+  int _itemCount;
   final data = <Color>[
     Colors.purple[50],
     Colors.purple[100],
@@ -85,6 +92,44 @@ class ListViewDemo extends StatelessWidget {
     Colors.purple[800],
     Colors.purple[900],
   ];
+
+  Widget getRefreshList() {
+    return SafeArea(
+        child:  Refresh(
+          onFooterRefresh: onFooterRefresh,
+          onHeaderRefresh: onHeaderRefresh,
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              return Padding(
+                key: Key(index.toString()),
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  "item:" + (index + 1).toString(),
+                  style: TextStyle(fontSize: 14.0),
+                ),
+              );
+            },
+            itemCount: _itemCount,
+          ),
+        ));
+  }
+
+  //下拉
+  Future<Null> onFooterRefresh() {
+    return new Future.delayed(new Duration(seconds: 2), () {
+      setState(() {
+        _itemCount += 10;
+      });
+    });
+  }
+//下拉
+  Future<Null> onHeaderRefresh() {
+    return new Future.delayed(new Duration(seconds: 2), () {
+      setState(() {
+        _itemCount = 10;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
